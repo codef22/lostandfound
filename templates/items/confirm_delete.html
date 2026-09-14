@@ -1,0 +1,7 @@
+<form method="post">
+    {% csrf_token %}
+
+    <h1>از حذف آیتم {{item.title}} اطمینان دارید؟</h1>
+
+    <button type="submit"> بله حذف کن! </button>
+</form>
