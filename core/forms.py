@@ -12,7 +12,8 @@ class ItemForm(ModelForm):
             "location",
             "event_date",
             "category",
-            "status"
+            "status",
+            "image"
         ]
     
     def clean_description(self):
@@ -25,16 +26,12 @@ class ItemForm(ModelForm):
 
         return description
 
-    def clean(self):
-        clean_data = super().clean()
+    def clean_title(self):
+        title = self.cleaned_data["title"]
 
-        event_date = clean_data["event_date"]
-        status = clean_data["status"]
-
-        if status == Item.Status.DELIVERED and event_date is None:
+        if len(title) < 3:
             raise ValidationError(
-                "برای وضعیت تحویل داده شده تاریخ نمیتواند خالی باشد."
-                )
+                "عنوان خیلی کوتاه است. یک عنوان مناسب همانند <کیف پول مشکی> ثبت کنید."
+            )
 
-        return clean_data
-
+        return title

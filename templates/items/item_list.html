@@ -1,5 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}
+صفحه لیست آیتم ها
+{% endblock %}
+
+{% block content %} 
+
 {% for item in items %}
     <h3> {{ item.title }}     </h3>
     <p>  {{ item.location }}  </p>
     <hr/>
+{% empty %}
+    <p>هیچ آیتمی یافت نشد.</p>
 {% endfor %}
+
+{% endblock %}

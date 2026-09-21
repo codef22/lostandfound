@@ -1,3 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}
+صفحه جزئیات آیتم
+{% endblock %}
+
+{% block content %}        
 <a href="{% url 'update_item' item.id %}"> ویرایش این آیتم </a>
 
 <h1> {{item.title}} </h1>
@@ -11,3 +18,10 @@
 <p>  {{item.event_date }} </p>
 
 <p>  {{item.category }} </p>
+
+{% if item.image %}
+    <img src="{{item.image.url}}" alt="{{item.title}}"/>
+{% else %}
+    <p>تصویری برای این آیتم وجود ندارد.</p>
+{% endif %}
+{% endblock %}
