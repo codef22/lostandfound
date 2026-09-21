@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.db.models import Q
 from django.shortcuts import (
     get_object_or_404,
     render,
@@ -45,6 +46,24 @@ def create_item(request):
 
 def list_items(request):
     items = Item.objects.all()
+
+    query = request.GET.get("q")
+    status = request.GET.get("status")
+    category = request.GET.get("category")
+
+    if query:
+        items = items.filter(
+            Q(title__icontains=query) |
+            Q(location__icontains=query) |
+            Q(description__icontains=query) 
+        )
+ 
+    if status:
+        items = items.filter(status=status)
+
+    if category:
+        items = items.filter(category_id=category)
+
     return render(
         request,
         "items/item_list.html",
