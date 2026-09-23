@@ -7,6 +7,7 @@ from django.shortcuts import (
 )
 from core.models import Item
 from core.forms import ItemForm
+from core.workflows import can_transition, can_create_claim
 
 
 def create_item(request):
@@ -137,3 +138,56 @@ def delete_item(request, pk):
         "items/confirm_delete.html",
         {"item": item}
     )
+
+
+def change_status(request, pk):
+
+    new_status = request.POST.get("status")
+    
+    item = get_object_or_404(
+        Item,
+        id=pk,
+        created_by=request.user
+    )
+    # guard clause
+    if not can_transition(item, new_status):
+        messages.error(
+            request,
+            f"این تغییر وضعیت ممکن نیست."
+        )
+        return redirect(
+            "item_detail",
+            pk=item.id
+        )
+        
+    item.status = new_status
+    item.save()
+
+    messages.success(
+        request,
+        f"آیتم به وضعیت {new_status} تغییر یافت."
+    )
+    
+    return redirect(
+        "item_detail",
+        pk=item.id
+    )
+
+
+def create_claim(request, pk):
+    # form
+    # validiate
+    item = get_object_or_404(
+        Item,
+        id=pk,
+        created_by=request.user
+    )
+    if not can_create_claim(item):
+        messages.error(
+            request,
+            f"ثبت درخواست برای این آیتم امکان پذیر نیست."
+        )
+        return redirect(
+            "item_detail",
+            pk=item.id
+        )
