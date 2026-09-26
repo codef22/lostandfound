@@ -26,5 +26,8 @@ def can_transition(item, new_status):
     return new_status in allowed
 
 
-def can_create_claim(item):
-    return item.status == Item.Status.OPEN
+def can_create_claim(item, user):
+    return (
+        item.status == Item.Status.OPEN and
+        item.created_by != user
+    )

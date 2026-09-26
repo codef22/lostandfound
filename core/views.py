@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.db.models import Q
 from django.shortcuts import (
     get_object_or_404,
@@ -10,6 +11,7 @@ from core.forms import ItemForm
 from core.workflows import can_transition, can_create_claim
 
 
+@login_required
 def create_item(request):
     if request.method == "POST":
         form = ItemForm(
@@ -72,6 +74,7 @@ def list_items(request):
     )
 
 
+@login_required
 def item_detail(requests, pk):
  
     item = get_object_or_404(
@@ -87,7 +90,13 @@ def item_detail(requests, pk):
     )
 
 
+@login_required
 def update_item(request, pk):
+    print(request.user.get_all_permissions())
+    if not request.user.has_perm("core.change_item"):
+        return redirect(
+            "list_item"
+        )
     item = get_object_or_404(
         Item,
         id=pk,
@@ -96,6 +105,7 @@ def update_item(request, pk):
     if request.method == "POST":
         form = ItemForm(
             request.POST,
+            request.FILES,
             instance=item
         )
         if form.is_valid():
@@ -118,6 +128,7 @@ def update_item(request, pk):
     )
 
 
+@login_required
 def delete_item(request, pk):
     item = get_object_or_404(
         Item,
@@ -140,6 +151,7 @@ def delete_item(request, pk):
     )
 
 
+@login_required
 def change_status(request, pk):
 
     new_status = request.POST.get("status")
@@ -174,15 +186,15 @@ def change_status(request, pk):
     )
 
 
+@login_required
 def create_claim(request, pk):
     # form
     # validiate
     item = get_object_or_404(
         Item,
         id=pk,
-        created_by=request.user
     )
-    if not can_create_claim(item):
+    if not can_create_claim(item, request.user):
         messages.error(
             request,
             f"ثبت درخواست برای این آیتم امکان پذیر نیست."
