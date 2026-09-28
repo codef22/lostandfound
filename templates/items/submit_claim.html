@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}
+ثبت مالیکت آیتم
+{% endblock %}
+
+{% block content %}  
+<h1>{{item.title}}</h1>
+<p>
+    {{item.description}}
+</p>
+<hr/>
+<form method="post">
+    {% csrf_token %}
+
+    {{form}}
+
+    <button type="submit"> submit </button>
+</form>
+{% endblock %}

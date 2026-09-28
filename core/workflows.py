@@ -1,4 +1,4 @@
-from core.models import Item
+from core.models import Item, Claim
 
 
 ALLOWED_TRANSITION = {
@@ -27,7 +27,13 @@ def can_transition(item, new_status):
 
 
 def can_create_claim(item, user):
+    has_claim = Claim.objects.filter(
+        claimant=user,
+        item=item
+    ).exists()
+
     return (
-        item.status == Item.Status.OPEN and
-        item.created_by != user
+        item.status == Item.Status.OPEN
+        and item.created_by != user
+        and has_claim == False  # not has_claim
     )

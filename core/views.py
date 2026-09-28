@@ -6,8 +6,8 @@ from django.shortcuts import (
     render,
     redirect
 )
-from core.models import Item
-from core.forms import ItemForm
+from core.models import Item, Claim
+from core.forms import ItemForm, ClaimForm
 from core.workflows import can_transition, can_create_claim
 
 
@@ -79,8 +79,7 @@ def item_detail(requests, pk):
  
     item = get_object_or_404(
         Item,
-        id=pk,
-        created_by=requests.user
+        id=pk
     )
 
     return render(
@@ -187,7 +186,7 @@ def change_status(request, pk):
 
 
 @login_required
-def create_claim(request, pk):
+def submit_claim(request, pk):
     # form
     # validiate
     item = get_object_or_404(
@@ -203,3 +202,79 @@ def create_claim(request, pk):
             "item_detail",
             pk=item.id
         )
+    if request.method == "POST":
+        form = ClaimForm(request.POST)
+
+        if form.is_valid():
+            claim = form.save(commit=False)
+
+            claim.item = item
+            claim.claimant = request.user
+            claim.status = Claim.Status.PENDING
+            claim.save()
+
+            messages.success(
+                request,
+                "درخواست مالکیت شما ثبت شد."
+            )
+            return redirect(
+                "item_detail",
+                pk=item.id
+            )
+
+    else:
+        form = ClaimForm()
+
+    return render(
+        request,
+        "items/submit_claim.html",
+        {
+            "form": form,
+            "item": item
+        }
+    )
+
+
+@login_required
+def claim_review_list(request):
+
+    claims = Claim.objects.filter(
+        status=Claim.Status.PENDING
+    ).order_by("created_at")
+
+    return render(
+        request,
+        "claim/review_list.html",
+        {"claims": claims}
+    )
+
+
+@login_required
+def approve_reject_claim(request, pk):
+ 
+    claim = get_object_or_404(
+        Claim,
+        id=pk
+    )
+    if request.method == "POST":
+        new_status = request.POST.get("status")
+
+        if new_status == 'approve':
+            claim.status = Claim.Status.APPROVED
+            claim.item.status = Item.Status.REVIEWING
+            claim.item.save()
+            claim.save()
+            msg_txt = "درخواست مالکیت تایید شد."
+        elif new_status == 'reject':
+            claim.status = Claim.Status.REJECTED
+            claim.save()
+            msg_txt = "درخواست مالکیت رد شد."
+        else:
+            msg_txt = "درخواست مالیکت وضعیت درستی ندارد."
+
+        messages.success(
+            request,
+            msg_txt
+        )
+
+    return redirect("claim_review_list")

@@ -1,6 +1,6 @@
 from django.forms import ModelForm, ValidationError
 
-from core.models import Item
+from core.models import Item, Claim
 
 
 class ItemForm(ModelForm):
@@ -35,3 +35,11 @@ class ItemForm(ModelForm):
             )
 
         return title
+
+
+class ClaimForm(ModelForm):
+    class Meta:
+        model = Claim
+        fields = [
+            "proof_text",
+        ]

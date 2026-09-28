@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}
+لیست درخواست های مالیکت آیتم ها
+{% endblock %}
+
+{% block content %}  
+{% if claims %}
+    {% for claim in claims%}
+        <div>
+            <h3>{{ claim.item.title }}</h3>
+            <p>
+                درخواست دهنده:
+                {{ claim.claimant.username }}
+            </p>
+            <p>
+                متن اثبات مالیکت:
+                {{ claim.proof_text}}
+            </p>
+            <p>
+                تاریخ ثبت:
+                {{ claim.created_at}}
+            </p>
+            {% if claim.status == 'pending' %}
+                <form
+                    method="post"
+                    action="{% url 'approve_reject_claim' claim.id %}"
+                >
+                    {% csrf_token %}
+                    <input type="hidden" value="approve" name="status">
+                    <button type="submit"> تایید </button>
+                </form>
+            {% endif %}
+            {% if claim.status == 'pending' %}
+                <form
+                    method="post"
+                    action="{% url 'approve_reject_claim' claim.id %}"
+                >
+                    {% csrf_token %}
+                    <input type="hidden" value="reject" name="status">
+                    <button type="submit"> رد </button>
+                </form>
+            {% endif %}
+        </div>
+        <hr/>
+    {% endfor %}
+{% else %}
+    <p>
+        درخواستی برای بررسی وجود ندارد
+    </p>
+{% endif %}
+{% endblock %}
