@@ -37,11 +37,7 @@ class Item(models.Model):
         on_delete=models.CASCADE,
         related_name='items_user'
     )
-    image = models.ImageField(
-        upload_to="items/",
-        blank=True,
-        null=True
-    )
+ 
 
     def __str__(self):
         return f"{self.title} | {self.status}"

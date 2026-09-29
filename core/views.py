@@ -16,10 +16,8 @@ def create_item(request):
     if request.method == "POST":
         form = ItemForm(
             request.POST,
-            request.FILES
         )
         print(request.POST)
-        print(request.FILES)
         
         if form.is_valid():
             item = form.save(commit=False)
@@ -48,6 +46,7 @@ def create_item(request):
 
 
 def list_items(request):
+    all_items_exist = Item.objects.exists()
     items = Item.objects.all()
 
     query = request.GET.get("q")
@@ -67,10 +66,20 @@ def list_items(request):
     if category:
         items = items.filter(category_id=category)
 
+    if not all_items_exist:
+        empty_state = "no_items"
+    elif not items.exists():
+        empty_state = "no_results"
+    else:
+        empty_state = None
+
     return render(
         request,
         "items/item_list.html",
-        {"items": items}
+        {
+            "items": items,
+            "empty_state": empty_state,
+        }
     )
 
 
@@ -104,7 +113,6 @@ def update_item(request, pk):
     if request.method == "POST":
         form = ItemForm(
             request.POST,
-            request.FILES,
             instance=item
         )
         if form.is_valid():

@@ -40,8 +40,26 @@
     <h3> {{ item.title }}     </h3>
     <p>  {{ item.location }}  </p>
     <hr/>
+
 {% empty %}
-    <p>هیچ آیتمی یافت نشد.</p>
+    {% if empty_state == "no_items" %}
+
+        <h2>هنوز هیچ آیتمی در سیستم ثبت نشده است.</h2>
+        <a href="{% url 'create_item' %}">
+            ثبت اولین آیتم
+        </a>
+
+    {% elif empty_state == "no_results" %}
+
+        <h2>نتیجه‌ای پیدا نشد.</h2>
+        <p>
+            جستجو یا فیلتر فعلی هیچ آیتمی پیدا نکرد.
+        </p>
+
+        <a href="{% url 'list_item' %}">
+            مشاهده همه آیتم‌ها
+        </a>
+{% endif %}
 {% endfor %}
 
 {% endblock %}
