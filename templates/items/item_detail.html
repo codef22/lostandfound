@@ -4,53 +4,8 @@
 صفحه جزئیات آیتم
 {% endblock %}
 
-{% block content %}     
-
-<form method="post" action="{% url 'change_status_item' item.id %}">
-    {% csrf_token %}
-    
-    <select name="status">
-        <option value="open"
-            {%if item.status == "open"%}
-                selected
-            {% endif %}
-        >
-            باز
-        </option>
-        <option value="reviewing"
-            {%if item.status == "reviewing"%}
-                selected
-            {% endif %}
-        >
-            در حال بررسی
-        </option>
-        <option value="delivered"
-            {%if item.status == "delivered"%}
-                selected
-            {% endif %}
-        >
-            تحویل شده 
-        </option>
-        <option value="closed"
-            {%if item.status == "closed"%}
-                selected
-            {% endif %}
-        >
-            بسته شده
-        </option>
-    </select>
-    <button type="submit"> ثبت تغییر وضعیت </button>
-</form>
-
+{% block content %}        
 <a href="{% url 'update_item' item.id %}"> ویرایش این آیتم </a>
-
-
-{% if item.status == "open" %}
-<form method="post">
-    {% csrf_token %}
-    <button type="submit"> ثبت درخواست مالکیت </button>
-</form>
-{% endif %}
 
 <h1> {{item.title}} </h1>
 
