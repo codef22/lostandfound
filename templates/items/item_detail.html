@@ -19,9 +19,38 @@
 
 <p>  {{item.category }} </p>
 
+<h2>اطلاعات تصویر</h2>
+
 {% if item.image %}
+
+ <p>تصویر وجود دارد: بله</p>
+
+    <p>
+        نام فایل:
+        {{ item.image.name }}
+    </p>
+
+    <p>
+        URL فایل:
+        {{ item.image.url }}
+    </p>
+
     <img src="{{item.image.url}}" alt="{{item.title}}"/>
-{% else %}
-    <p>تصویری برای این آیتم وجود ندارد.</p>
+
+{% else %} 
+
+ <p>تصویر وجود دارد: خیر</p>
+    <div style="
+        width: 300px;
+        height: 200px;
+        border: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    ">
+        تصویری برای این آیتم وجود ندارد.
+    </div>
+  
 {% endif %}
 {% endblock %}

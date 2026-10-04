@@ -35,3 +35,12 @@ class ItemForm(ModelForm):
             )
 
         return title
+
+    def clean_image(self): 
+        image = self.cleaned_data.get("image") 
+        if image: 
+            max_size = 2 * 1024 * 1024 # 2MB 
+            if image.size > max_size: 
+                raise ValidationError( "حجم تصویر نباید بیشتر از ۲ مگابایت باشد." 
+                ) 
+        return image
