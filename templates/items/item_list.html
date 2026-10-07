@@ -30,16 +30,70 @@
     </select>
     <input type="number" name="category" placeholder="دسته بندی..." value="{{ request.GET.category }}">
 
+    <!-- از تاریخ --> 
+    <label for="date_from">از تاریخ:</label> 
+    
+    <input type="date" id="date_from" name="date_from" value="{{ request.GET.date_from }}" > 
+    
+    <!-- تا تاریخ --> 
+    <label for="date_to">تا تاریخ:</label> 
+    
+    <input type="date" id="date_to" name="date_to" value="{{ request.GET.date_to }}" >
+
+    <label for="sort">ترتیب نمایش:</label>
+
+    <select name="sort" id="sort">
+
+        <option
+            value="newest"
+            {% if request.GET.sort == "newest" %}
+                selected
+            {% endif %}
+        >
+             جدیدترین
+        </option>
+
+        <option
+            value="oldest"
+            {% if request.GET.sort == "oldest" %}
+                selected
+            {% endif %}
+        >
+             قدیمی‌ترین
+        </option>
+
+    </select>
     <button type="submit"> search </button>
+    <a href="{% url 'list_item' %}">
+    پاک کردن فیلترها
+    </a>
 </form>
 
+
+<hr/>
+
+{% if result_count > 0 %}
+
+    <p>
+        نتیجه پیدا شد: {{ result_count }}
+    </p>
+
+{% else %}
+
+    <p>
+        هیچ نتیجه‌ای پیدا نشد.
+    </p>
+
+{% endif %}
 
 <hr/>
 
 {% for item in items %}
     <h3> {{ item.title }}     </h3>
     <p>  {{ item.location }}  </p>
-    <hr/>
+    <p> تاریخ وقوع: {{ item.event_date }} </p>
+<hr/>
+
 {% empty %}
     <p>هیچ آیتمی یافت نشد.</p>
 {% endfor %}

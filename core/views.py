@@ -51,23 +51,55 @@ def list_items(request):
     status = request.GET.get("status")
     category = request.GET.get("category")
 
+    date_from = request.GET.get("date_from") 
+    date_to = request.GET.get("date_to")
+
+    sort = request.GET.get("sort")
+
+    # جستجو
     if query:
         items = items.filter(
             Q(title__icontains=query) |
             Q(location__icontains=query) |
             Q(description__icontains=query) 
         )
- 
+
+    # فیلتر وضعیت
     if status:
         items = items.filter(status=status)
 
+    # فیلتر دسته‌بندی
     if category:
         items = items.filter(category_id=category)
+
+    # فیلتر از تاریخ 
+    if date_from: 
+        items = items.filter(event_date__gte=date_from) 
+
+    # فیلتر تا تاریخ 
+    if date_to: 
+        items = items.filter(event_date__lte=date_to)
+
+    # مرتب‌سازی 
+    sort_options = { 
+        "newest": "-created_at", 
+        "oldest": "created_at", 
+    } 
+    
+    sort_field = sort_options.get(sort, "-created_at") 
+    
+    items = items.order_by(sort_field)
+
+    # تعداد نتایج بعد از Search و Filter 
+    result_count = items.count()
 
     return render(
         request,
         "items/item_list.html",
-        {"items": items}
+        {
+            "items": items,
+            "result_count": result_count,
+        }
     )
 
 
