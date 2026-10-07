@@ -6,6 +6,36 @@
 
 {% block content %} 
 
+<form method="get">
+    
+    <input type="text" name="q" placeholder="جستوجو..." value="{{ request.GET.q }}">
+    <select name="status">
+        <option value="">
+            همه وضعیت ها
+        </option>
+        <option value="open"
+            {%if request.GET.status == "open"%}
+                selected
+            {% endif %}
+        >
+            باز
+        </option>
+        <option value="closed"
+            {%if request.GET.status == "closed"%}
+                selected
+            {% endif %}
+        >
+            بسته شده
+        </option>
+    </select>
+    <input type="number" name="category" placeholder="دسته بندی..." value="{{ request.GET.category }}">
+
+    <button type="submit"> search </button>
+</form>
+
+
+<hr/>
+
 {% for item in items %}
     <h3> {{ item.title }}     </h3>
     <p>  {{ item.location }}  </p>

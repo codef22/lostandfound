@@ -1,25 +1,4 @@
-{% if form.instance.image %}
-    <p>تصویر فعلی:</p>
-
-    <img
-        src="{{ form.instance.image.url }}"
-        alt="{{ form.instance.title }}"
-        width="200"
-    >
-    <form
-        method="post"
-        action="{% url 'delete_item_image' form.instance.id %}"
-    >
-        {% csrf_token %}
-
-        <button type="submit">
-            حذف تصویر
-        </button>
-    </form>
-
-{% endif %}
-
-<form method="post" enctype="multipart/form-data">
+<form method="post">
     {% csrf_token %}
 
     {{form}}
